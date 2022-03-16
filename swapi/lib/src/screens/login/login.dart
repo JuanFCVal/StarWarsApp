@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:swapi/src/providers/character_provider.dart';
 import 'package:swapi/src/providers/login_provider.dart';
 import 'package:swapi/src/screens/login/widgets/background/background.dart';
 
@@ -21,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.black,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -74,35 +74,29 @@ class form extends StatefulWidget {
 }
 
 class _formState extends State<form> {
-  final _formKey = GlobalKey<FormState>();
-
   bool _visible = true;
-
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _userController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final _loginProvider = Provider.of<LoginProvider>(context);
-    late String user;
-    late String pass;
-    final TextEditingController _userController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
     return Column(
       children: [
-        Text("Identifíquese", style: TextStyle(color: Colors.white)),
-        SizedBox(
+        const Text("Identifíquese", style: TextStyle(color: Colors.white)),
+        const SizedBox(
           height: 20,
         ),
         Form(
             key: _formKey,
             child: Column(children: [
               TextFormField(
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
                     labelText: "Personaje",
                     labelStyle: TextStyle(color: Colors.white)),
                 controller: _userController,
-                onChanged: (value) {
-                  user = value;
-                },
+                onChanged: (value) {},
                 validator: (value) {
                   if (value!.isEmpty) {
                     return ("Ingrese el usuario");
@@ -158,18 +152,7 @@ class _formState extends State<form> {
                         ),
                       ),
                       onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          if (await _loginProvider.validateLogin(
-                              _userController.text, _passwordController.text)) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              'home',
-                              (route) => false,
-                            );
-                          } else {
-                            _showToast(context);
-                          }
-                        }
+                        _submitForm(_loginProvider);
                       },
                     )
             ]))
@@ -188,5 +171,21 @@ class _formState extends State<form> {
         ),
       ),
     );
+  }
+
+  _submitForm(_loginProvider) async {
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).requestFocus(FocusNode());
+      if (await _loginProvider.validateLogin(
+          _userController.text, _passwordController.text)) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          'home',
+          (route) => false,
+        );
+      } else {
+        _showToast(context);
+      }
+    }
   }
 }

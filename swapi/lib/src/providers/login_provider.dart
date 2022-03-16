@@ -10,7 +10,18 @@ class LoginProvider extends ChangeNotifier {
   List<Character> characters = [];
   bool _loading = false;
   late List<Film> films = [];
+  late Film selectedFilm;
   late Character logedCharacter;
+  List<Character> movieCharacters = [];
+  bool fade = true;
+  setSelectedFilm(Film film) {
+    selectedFilm = film;
+  }
+
+  set Fade(value) {
+    fade = value;
+    notifyListeners();
+  }
 
   setCharacters(characterResponse) {
     characters.addAll(characterResponse.characters!);
@@ -25,10 +36,8 @@ class LoginProvider extends ChangeNotifier {
 
   getCharactersForLogin() async {
     final url = Uri.parse('$baseUrl/people/');
-    print(url);
     final resp = await http.get(url);
     final characterResponse = charactersFromJson(resp.body);
-    print(resp.body);
     setCharacters(characterResponse);
   }
 
@@ -49,8 +58,12 @@ class LoginProvider extends ChangeNotifier {
   }
 
   addFilm(Film film) {
-    print(film.director);
     films.add(film);
+    notifyListeners();
+  }
+
+  addCharacter(Character character) {
+    movieCharacters.add(character);
     notifyListeners();
   }
 
@@ -69,7 +82,28 @@ class LoginProvider extends ChangeNotifier {
     } catch (error) {
       debugPrint("Error while loading films");
     }
+  }
 
-    // ignore: prefer_typing_uninitialized_variables
+  getCharactersFromFilm() async {
+    setLoading(true);
+
+    try {
+      print(selectedFilm.characters!.length);
+      for (final character in selectedFilm.characters!) {
+        Fade = false;
+        final url = Uri.parse('$character');
+        debugPrint(character);
+        final resp = await http.get(url);
+        debugPrint(resp.body);
+        Character auxCharacter = characterFromJson(resp.body);
+        debugPrint(auxCharacter.name);
+        addCharacter(auxCharacter);
+        Fade = true;
+      }
+    } catch (error) {
+      debugPrint("Error while loading characters");
+    }
+
+    setLoading(false);
   }
 }

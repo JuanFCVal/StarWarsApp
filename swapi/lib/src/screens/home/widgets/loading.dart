@@ -10,7 +10,7 @@ class LoadingBackground extends StatelessWidget {
         Container(
           color: Color.fromRGBO(8, 31, 41, 1),
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 0.7,
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.7,
