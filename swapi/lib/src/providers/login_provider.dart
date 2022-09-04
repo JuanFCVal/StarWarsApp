@@ -103,7 +103,6 @@ class LoginProvider extends ChangeNotifier {
     } catch (error) {
       debugPrint("Error while loading characters");
     }
-
     setLoading(false);
   }
 }
