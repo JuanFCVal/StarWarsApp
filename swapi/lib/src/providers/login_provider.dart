@@ -14,6 +14,24 @@ class LoginProvider extends ChangeNotifier {
   late Character logedCharacter;
   List<Character> movieCharacters = [];
   bool fade = true;
+  Icon _hearticon = const Icon(
+    Icons.favorite_border,
+  );
+  Icon get hearticon => _hearticon;
+
+  void changeHeart() {
+    if (_hearticon.icon == Icons.favorite_border) {
+      _hearticon = const Icon(
+        Icons.favorite,
+      );
+    } else {
+      _hearticon = const Icon(
+        Icons.favorite_border,
+      );
+    }
+    notifyListeners();
+  }
+
   setSelectedFilm(Film film) {
     selectedFilm = film;
   }
@@ -47,12 +65,12 @@ class LoginProvider extends ChangeNotifier {
     if (characters.isEmpty) {
       await getCharactersForLogin();
     }
-    characters.forEach((character) {
+    for (var character in characters) {
       if (user == character.name && password == character.hairColor) {
         logedCharacter = character;
         valid = true;
       }
-    });
+    }
     setLoading(false);
     return valid;
   }
@@ -71,13 +89,13 @@ class LoginProvider extends ChangeNotifier {
     setLoading(true);
     try {
       print("Looking for films");
-      logedCharacter.films!.forEach((element) async {
-        final url = Uri.parse('$element');
+      for (var element in logedCharacter.films!) {
+        final url = Uri.parse(element);
         print(url);
         final resp = await http.get(url);
         final film = filmFromJson(resp.body);
         addFilm(film);
-      });
+      }
       setLoading(false);
     } catch (error) {
       debugPrint("Error while loading films");
@@ -91,7 +109,7 @@ class LoginProvider extends ChangeNotifier {
       print(selectedFilm.characters!.length);
       for (final character in selectedFilm.characters!) {
         Fade = false;
-        final url = Uri.parse('$character');
+        final url = Uri.parse(character);
         debugPrint(character);
         final resp = await http.get(url);
         debugPrint(resp.body);

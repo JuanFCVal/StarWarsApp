@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
               const BackGround(),
               AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,17 +101,18 @@ class _formState extends State<form> {
                   if (value!.isEmpty) {
                     return ("Ingrese el usuario");
                   }
+                  return null;
                 },
               ),
               const SizedBox(height: 10),
               TextFormField(
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     hintText: "****",
                     labelText: "Contraseña",
-                    labelStyle: TextStyle(color: Colors.white),
+                    labelStyle: const TextStyle(color: Colors.white),
                     suffixIcon: Container(
-                      margin: EdgeInsets.only(right: 20),
+                      margin: const EdgeInsets.only(right: 20),
                       child: InkWell(
                         onTap: () {
                           setState(() {
@@ -131,13 +132,14 @@ class _formState extends State<form> {
                   if (value!.isEmpty) {
                     return ("Ingrese la contraseña");
                   }
+                  return null;
                 },
               ),
               const SizedBox(
                 height: 30,
               ),
               _loginProvider.isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
                       style: ButtonStyle(
                           backgroundColor:
@@ -154,7 +156,13 @@ class _formState extends State<form> {
                       onPressed: () async {
                         _submitForm(_loginProvider);
                       },
-                    )
+                    ),
+              IconButton(
+                icon: _loginProvider.hearticon,
+                color: Colors.red,
+                iconSize: 25.0,
+                onPressed: _loginProvider.changeHeart,
+              ),
             ]))
       ],
     );
@@ -173,7 +181,7 @@ class _formState extends State<form> {
     );
   }
 
-  _submitForm(_loginProvider) async {
+  _submitForm(LoginProvider _loginProvider) async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).requestFocus(FocusNode());
       if (await _loginProvider.validateLogin(
